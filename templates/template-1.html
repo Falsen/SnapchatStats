@@ -1,0 +1,139 @@
+
+<!doctype html>
+<html>
+
+<head>
+	<title>Line Chart</title>
+	<script src="http://www.chartjs.org/dist/2.7.2/Chart.bundle.js"></script>
+    <script src="http://www.chartjs.org/samples/latest/utils.js"></script>
+	<style>
+	canvas{
+		-moz-user-select: none;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+	}
+	</style>
+</head>
+
+<body>
+	<div style="width:75%;">
+		<canvas id="canvas"></canvas>
+	</div>
+	<br>
+	<br>
+	<script>
+
+        Object.size = function(obj) {
+            var size = 0, key;
+            for (key in obj) {
+             size++;
+           }
+           return size;
+       };
+		var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+        var udata = {INPUT_DATA};
+
+        var data = [];
+
+        while(Object.size(udata)>0){
+            console.log(udata);
+            var min = 20500505;
+            var minkey = null;
+            for(var key in udata){
+                var nm = parseInt( key.replace("-","").replace("-",""));
+
+                if( min > nm){
+                    min = nm;
+                    minkey = key;
+                }
+            }
+            console.log(minkey, (minkey.replace("-","").replace("-","") ), min);
+
+            data.push({
+                date: minkey,
+                data: udata[minkey]
+            });
+            delete udata[minkey];
+
+        }
+
+        console.log(data);
+
+
+    	var config = {
+			type: 'line',
+			data: {
+				labels: [],
+				datasets: [{
+					label: 'Sent snaps',
+					backgroundColor: window.chartColors.red,
+					borderColor: window.chartColors.red,
+					data: [],
+					fill: false,
+				}, {
+					label: 'Received snaps',
+					fill: false,
+					backgroundColor: window.chartColors.blue,
+					borderColor: window.chartColors.blue,
+					data: [],
+				}]
+			},
+			options: {
+				responsive: true,
+				title: {
+					display: true,
+					text: 'Snapchat addiction index'
+				},
+				tooltips: {
+					mode: 'index',
+					intersect: false,
+				},
+				hover: {
+					mode: 'nearest',
+					intersect: true
+				},
+				scales: {
+					xAxes: [{
+						display: true,
+						scaleLabel: {
+							display: true,
+							labelString: 'Month'
+						}
+					}],
+					yAxes: [{
+						display: true,
+						scaleLabel: {
+							display: true,
+							labelString: 'Value'
+						}
+					}]
+				}
+			}
+		};
+
+		window.onload = function() {
+			var ctx = document.getElementById('canvas').getContext('2d');
+			window.myLine = new Chart(ctx, config);
+
+            console.log(data);
+
+            for(var i=0;i<data.length;i++){
+                var _data = data[i];
+
+                console.log(_data);
+
+                config.data.labels.push(_data.date);
+
+                var d = _data.data;
+                config.data.datasets[0].data.push(d[0]);
+                config.data.datasets[1].data.push(d[1]);
+            }
+
+            window.myLine.update();
+		};
+
+	</script>
+</body>
+
+</html>
